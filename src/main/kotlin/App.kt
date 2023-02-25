@@ -1,7 +1,30 @@
 /* Modul Memulai Pemrograman Dengan Kotlin */
 
-import kotlin.random.Random
+/* Function Anatomy
+private fun sum(valueA: Int, valueB: Int): Int
+{
+    return valueA + valueB
+}
 
+// Function Header
+private fun sum(valueA: Int, valueB: Int): Int
+
+// Function Body
+{
+    return valueA + valueB
+}
+
+// Function Name
+fun
+
+// Function Parameter
+(valueA: Int, valueB: Int)
+
+// Function Return Type
+...): Int
+* */
+
+import kotlin.random.Random
 fun main (){
 //    Sub_Modul_Kotlin_Fundamental()
 //    Sub_Modul_Control_Flow()
@@ -37,6 +60,9 @@ data class DataUser(val name : String, val age : Int){
     }
 }
 
+val Int.slice: Int
+    get() = this / 2
+
 /* Enum */
 enum class Color(val value: Int) {
     RED(0xFF0000){
@@ -67,9 +93,35 @@ fun Sub_Modul_Kotlin_Functional_Programming(){
         }
         return name
     }
-    val list:MutableList<User> = getListUser()
-    print(getUsername(list))
 
+    val list:MutableList<User> = getListUser()
+    println(getUsername(list))
+
+    fun getFullName(
+        first: String = "Kotlin",
+        middle: String = " is ",
+        last: String = "Awesome"): String {
+        return "$first $middle $last"
+    }
+
+    println(getFullName())
+
+    fun sets(name: String, vararg number: Int): Int {
+        return number.size
+    }
+
+    print(sets("kotlin", 10, 20, 30))
+
+    val number = intArrayOf(10, 20, 30, 40)
+    println(sets("kotlin",10, 20, 20, *number , 10))
+
+    fun Int.plusThree(): Int {
+        return this + 3
+    }
+    println(10.plusThree())
+
+    // class
+    println(10.slice)
 
 }
 
