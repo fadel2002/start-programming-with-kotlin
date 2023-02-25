@@ -31,6 +31,9 @@ fun main (){
 //    Sub_Modul_Data_Class_And_Collection()
     Sub_Modul_Kotlin_Functional_Programming()
 }
+/* Type Alias */
+//typealias Arithmetic = ((Int, Int) -> Int)
+typealias Arithmetic = ((Int, Int) -> Int)?
 
 /* Class */
 class User(val name : String, val age : Int){
@@ -60,8 +63,8 @@ data class DataUser(val name : String, val age : Int){
     }
 }
 
-val Int.slice: Int
-    get() = this / 2
+val Int?.slice: Int
+    get() = this?.div(2) ?: 0
 
 /* Enum */
 enum class Color(val value: Int) {
@@ -120,9 +123,44 @@ fun Sub_Modul_Kotlin_Functional_Programming(){
     }
     println(10.plusThree())
 
-    // class
-    println(10.slice)
+    println(10.slice) // class
 
+    val nullVal:Int? = null
+    println(nullVal.slice)
+
+    val sum: Arithmetic = { valueA, valueB -> valueA + valueB }
+    val multiply: Arithmetic = { valueA, valueB -> valueA * valueB }
+//    println("${sum(5,2)} ${multiply(5,2)}")
+//    println("${sum.invoke(5,2)} ${multiply.invoke(5,2)}")
+    println("${sum?.invoke(5,2)} ${multiply?.invoke(5,2)}")
+
+    val message = { println("Hello From Lambda") }
+    message()
+
+    val printMessage = { message: String -> println(message) }
+    printMessage("Hello From Lambda")
+
+    var sumLambda: (Int, Int) -> Int = { value1, value2 -> value1 + value2 + 1 }
+    println(sumLambda(10, 5))
+
+    printResult(10){ value1, value2 ->
+        value1 + value2 + 1
+    }
+    printResult(10 ,sumLambda)
+
+    // menggunakan Domain specific languages (DSL) untuk meringkas kode yang berulang
+    fun buildString(action: StringBuilder.() -> Unit): String {
+        val stringBuilder = StringBuilder()
+        stringBuilder.action()
+        return stringBuilder.toString()
+    }
+}
+
+// keyword inline disini agar saat di compile instansi dari fungsi yang di deklarasi tidak berulang
+// sehingga waktu compile akan lebih cepat
+inline fun printResult(value: Int, sum: (Int, Int) -> Int) {
+    val result = sum(value, value)
+    println(result)
 }
 
 fun Sub_Modul_Data_Class_And_Collection(){
