@@ -24,8 +24,24 @@ fun
 ...): Int
 * */
 
+// Import
+import java.beans.Visibility
 import kotlin.random.Random
 import kotlin.reflect.KProperty
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sqrt
+import kotlin.NumberFormatException
+//import com.dicoding.oop.utils.*
+import com.dicoding.oop.utils.PI as PI_P
+import com.dicoding.oop.utils.factorial
+import com.dicoding.oop.utils.pow
+import com.dicoding.oop.utils.sayHello
+import kotlinx.coroutines.*
+import kotlin.system.measureTimeMillis
+import com.dicoding.coroutine.utils.pointer
+import kotlinx.coroutines.channels.Channel
+
 fun main (){
     val Sub_Modul_Kotlin_Functional_Programming = {
         /* Materi Sub Modul */
@@ -54,14 +70,52 @@ fun main (){
         Property()
         Property_Delegation()
         Extension_Properties()
+        Primary_Constructor()
+        Second_Constructor()
+        Visibility_Modifiers()
+        Inheritances()
+        Overloading()
+        Abstract_Class()
+        Interfaces()
+        Import_Dan_Packages()
+        Membuat_Package_Baru()
+        Exception_Handling()
+    }
+    val Sub_Modul_Kotlin_Generics = {
+        /* Materi Sub Modul */
+        Konsep_Generics_Pada_Kotlin()
+        Mendeklarasikan_Kelas_Generics()
+        Mendeklarasikan_Fungsi_Generics()
+        Constraint_Type_Parameter()
+        Variance()
+    }
+    val Sub_Modul_Coroutines = {
+        /* Materi Sub Modul */
+        Concurrency_Pada_Kotlin()
+        Concurrency_VS_Parallelism()
+        Process_Thread_IO_Bound()
+        Deadlocks_Dan_Livelocks()
+        Starvation_Dan_Race_Condition()
+        Kotlin_Coroutines()
+//        Memulai_Coroutines()
+//        Coroutines_Builder()
+        Job()
+//        Menjalankan_Job_Baru()
+        Membatalkan_Job()
+//        Deffered()
+        Coroutine_Dispacther()
+        Channels()
     }
 
 //    Sub_Modul_Kotlin_Fundamental()
 //    Sub_Modul_Control_Flow()
 //    Sub_Modul_Data_Class_And_Collection()
 //    Sub_Modul_Kotlin_Functional_Programming()
-    Sub_Modul_Kotlin_Object_Oriented_Programming()
+//    Sub_Modul_Kotlin_Object_Oriented_Programming()
+//    Sub_Modul_Kotlin_Generics()
+//    Sub_Modul_Coroutines()
 
+    Exam()
 }
 
 /* Global Variable */
@@ -128,6 +182,215 @@ enum class Color(val value: Int) {
 }
 
 /* Function */
+fun Exam(){
+    val char = "\t \n \" "
+    println(char)
+
+    var i = 3
+    while (i > 0) {
+        println(i)
+        i--
+    }
+    println("Completed")
+
+    fun doSomething(vararg input: Int): Int {
+        return (input.sum() / input.size)
+    }
+    val result = doSomething(1, 2, 3, 4, 5)
+    println(result)
+
+    val total = listOf(1, 2, 3, 4, 5, 1, 2, 3, 4, 5)
+    val result1 = total.distinct()
+    val result2 = result1.slice(1..3)
+    println(result2)
+
+    fun Int.plusThree(): Int {
+        return this + 3
+    }
+    println(10.plusThree())
+}
+fun Concurrency_Pada_Kotlin(){
+    // TODO: https://www.dicoding.com/academies/80/tutorials/4266
+}
+fun Concurrency_VS_Parallelism(){
+    // Perbedaan concurrency dan parallelism, tak kira sama ternyata berbeda
+    // conccurency berdasar pengertianku, banyak proses yang dikerjakan secara bersamaan oleh satu objek(bisa orang, bisa cpu, etc)
+    // TODO: https://www.dicoding.com/academies/80/tutorials/4269?from=4266
+}
+fun Process_Thread_IO_Bound(){
+    // TODO: https://www.dicoding.com/academies/80/tutorials/4272?from=4269
+}
+fun Deadlocks_Dan_Livelocks(){
+    // TODO: https://www.dicoding.com/academies/80/tutorials/4275?from=4272
+}
+fun Starvation_Dan_Race_Condition(){
+    // Strarvation kondisi dimana satu proses mendapatkan banyak resources namun satunya tidak samsek
+    // Race Condition kondisi dimana ketika suatu concurrency mau mengakses data yang sama dan ingin mengubahnya, sehingga tabrakan
+    // TODO: https://www.dicoding.com/academies/80/tutorials/4281?from=4275
+}
+fun Kotlin_Coroutines(){
+    // TODO: https://www.dicoding.com/academies/80/tutorials/4278?from=4281
+}
+fun Memulai_Coroutines() = runBlocking{
+    launch {
+        delay(1000L)
+        println("Coroutines!")
+        delay(1000L)
+        println("This also not the end")
+        delay(1000L)
+        println("This the end")
+    }
+    println("Hello,")
+    delay(2000L)
+    println("This is not the end, isn't it ?")
+}
+fun Coroutines_Builder() = runBlocking {
+
+    suspend fun getCapital(): Int {
+        delay(500L)
+        return 50000
+    }
+    suspend fun getIncome(): Int {
+        delay(500L)
+        return 75000
+    }
+    val sequentialTime = measureTimeMillis {
+        // Sequential
+        val capital = getCapital()
+        val income = getIncome()
+        println("Your profit is ${income - capital}")
+    }
+
+    val conccurencyTime = measureTimeMillis {
+        // Conccurency
+        val capital = async { getCapital() }
+        val income = async { getIncome() }
+        println("Your profit is ${income.await() - capital.await()}")
+    }
+    println("Completed in $sequentialTime ms vs $conccurencyTime ms")
+
+}
+fun Job(){
+    // TODO: https://www.dicoding.com/academies/80/tutorials/4288?from=4285
+}
+fun Menjalankan_Job_Baru(){
+    // start akan menjalankan println("Other task")
+    fun func1() = runBlocking{
+        val job = launch(start = CoroutineStart.LAZY) {
+            delay(1000L)
+            println("Start new job!")
+        }
+        job.start()
+        println("Other task")
+    }
+
+    // join akan menunggu sampai job selesai kemudian menjalankan println("Other task")
+    fun func2() = runBlocking{
+        val job = launch(start = CoroutineStart.LAZY) {
+            delay(1000L)
+            println("Start new job!")
+        }
+        job.join()
+        println("Other task")
+    }
+    func1()
+    func2()
+}
+
+fun Membatalkan_Job() {
+    // klik fungsi dibawah ini untuk melihat contoh pembatalan job
+    pointer()
+}
+fun Deffered() = runBlocking{
+    suspend fun getCapital(): Int {
+        delay(500L)
+        return 50000
+    }
+    suspend fun getIncome(): Int {
+        delay(500L)
+        return 75000
+    }
+    // variabel capital dan income disini merupakan contoh nilai defered
+    val capital = async { getCapital() }
+    val income = async { getIncome() }
+    println("Your profit is ${income.await() - capital.await()}")
+}
+fun Coroutine_Dispacther(){
+    // TODO: https://www.dicoding.com/academies/80/tutorials/4299?from=4297
+}
+fun Channels() = runBlocking(CoroutineName("main")){
+    val channel = Channel<Int>()
+    launch(CoroutineName("v1coroutine")){
+        println("Sending from ${Thread.currentThread().name}")
+        for (x in 1..5) {
+            delay(500L)
+            channel.send(x * x)
+        }
+    }
+
+    repeat(5) { println(channel.receive()) }
+    println("received in ${Thread.currentThread().name}")
+}
+
+fun Konsep_Generics_Pada_Kotlin(){
+    // type variabel ditentukan secara explisit
+    val contributors = listOf<String>("jasoet", "alfian","nrohmen","dimas","widy")
+    // type variabel ditentukan oleh kompiler sebagai string
+    val contributor = listOf("alfian","nrohmen","dimas","widy")
+    // kompiler tidak bisa menentukan tipe variable karena tidak mempunyai data,
+    // maka harus di sebutkan secara explisit
+    val contribute = listOf<String>()
+    // beberapa keyword bisa menggunakan >1 tipe variabel
+    val points = mapOf<String, Int>( "alfian" to 10 , "dimas" to 20 )
+
+    println(contributors)
+    println(contributor)
+    println(contribute)
+    println(points)
+}
+
+fun Mendeklarasikan_Kelas_Generics(){
+    // TODO: https://www.dicoding.com/academies/80/tutorials/4257
+}
+fun Mendeklarasikan_Fungsi_Generics(){
+    val numbers = (1..100).toList()
+    println(numbers.slice<Int>(1..10))
+
+    // jika semua nilai memiliki tipe yang sama maka
+    // kompiler akan menentukan tersebut
+    println(numbers.slice(1..10))
+}
+fun Constraint_Type_Parameter(){
+    // TODO: https://www.dicoding.com/academies/80/tutorials/4261?from=4258
+}
+fun Variance(){
+    abstract class Vehicle(var wheel: Int){
+        fun wheel(): Int{
+            return wheel
+        }
+    }
+    class Car(var speed: Int) : Vehicle(4){}
+    class MotorCycle(var speed: Int) : Vehicle(2)
+
+    val car = Car(200)
+    val motorCycle = MotorCycle(100)
+    var vehicle: Vehicle = car
+    println(vehicle.wheel())
+    vehicle = motorCycle
+    println(vehicle.wheel())
+
+    // penggunaan variance lainnya, agar object bisa di assign ke variabel lain
+    val carList = listOf(Car(100) , Car(120))
+    val vehicleList = carList
+    println(vehicleList)
+    println(carList)
+
+    /* TODO: Covariant, Contravariant
+        https://www.dicoding.com/academies/80/tutorials/4263?from=4261
+    */
+
+}
+
 fun Object_Everywhere(){
     val someString = "Dicoding"
     println(someString.reversed())
@@ -262,6 +525,221 @@ fun Property_Delegation(){
 fun Extension_Properties(){
     val dicodingCat = Animal("Dicoding Miaw", 5.0, 2, true)
     println(dicodingCat.getAnimalInfo)
+}
+
+fun Primary_Constructor(){
+    class Animal(var name: String, var weight: Double, var age: Int = 0, var isMammal: Boolean = true)
+    val dicodingCat = Animal("Dicoding Miaw", -2.9, -5)
+    println("Nama: ${dicodingCat.name}, Berat: ${dicodingCat.weight}, Umur: ${dicodingCat.age}, mamalia: ${dicodingCat.isMammal}" )
+
+    class AnimalWithValidation(name: String, weight: Double, age: Int, isMammal: Boolean) {
+        val name: String
+        val weight: Double
+        val age: Int
+        val isMammal: Boolean
+
+        init {
+            this.weight = if(weight < 0) 0.1 else weight
+            this.age = if(age < 0) 0  else age
+            this.name = name
+            this.isMammal = isMammal
+        }
+    }
+    val dicodingCatValid = AnimalWithValidation("Dicoding Miaw", -2.9, -5, true)
+    println("Nama: ${dicodingCatValid.name}, Berat: ${dicodingCatValid.weight}, Umur: ${dicodingCatValid.age}, mamalia: ${dicodingCatValid.isMammal}")
+
+}
+fun Second_Constructor(){
+    class Animal(name: String, weight: Double, age: Int) {
+        val name: String
+        val weight: Double
+        val age: Int
+        var isMammal: Boolean
+
+        init {
+            this.weight = if(weight < 0) 0.1 else weight
+            this.age = if(age < 0) 0  else age
+            this.name = name
+            this.isMammal = false
+        }
+
+        constructor(name: String, weight: Double, age: Int, isMammal: Boolean) : this(name, weight, age) {
+            this.isMammal = isMammal
+        }
+    }
+
+    val dicodingCat = Animal("Dicoding Miaw", 2.5, 2, true)
+    println("Nama: ${dicodingCat.name}, Berat: ${dicodingCat.weight}, Umur: ${dicodingCat.age}, mamalia: ${dicodingCat.isMammal}")
+
+    val dicodingBird = Animal("Dicoding tweet", 0.5, 1)
+    println("Nama: ${dicodingBird.name}, Berat: ${dicodingBird.weight}, Umur: ${dicodingBird.age}, mamalia: ${dicodingBird.isMammal}")
+
+    class DefaultAnimal{
+        val name: String = "Dicoding Miaw"
+        val weight: Double = 4.2
+        val age: Int = 2
+        val isMammal: Boolean = true
+    }
+    val dicodingCatDefault = DefaultAnimal()
+    println("Nama: ${dicodingCatDefault.name}, Berat: ${dicodingCatDefault.weight}, Umur: ${dicodingCatDefault.age}, mamalia: ${dicodingCatDefault.isMammal}" )
+}
+fun Visibility_Modifiers(){
+    class Animal(private var name: String, private val weight: Double, private val age: Int, private val isMammal: Boolean = true) {
+        fun getName() : String {
+            return name
+        }
+        fun setName(newName: String) {
+            name = newName
+        }
+    }
+    val dicodingCat = Animal("Dicoding Miaw", 2.5, 2, true)
+    println(dicodingCat.getName())
+    dicodingCat.setName("Gooose")
+    println(dicodingCat.getName())
+}
+fun Inheritances(){
+    open class Animal(val name: String, val weight: Double, val age: Int, val isCarnivore: Boolean){
+        open fun eat(){
+            println("$name sedang makan!")
+        }
+        open fun sleep(){
+            println("$name sedang tidur!")
+        }
+    }
+    class Cat(pName: String, pWeight: Double, pAge: Int, pIsCarnivore: Boolean, val furColor: String, val numberOfFeet: Int)
+        : Animal(pName, pWeight, pAge, pIsCarnivore) {
+        fun playWithHuman() {
+            println("$name bermain bersama Manusia !")
+        }
+        override fun sleep() {
+            println("$name sedang tidur di bantal !")
+        }
+    }
+
+    val dicodingCat = Cat("Dicoding Miaw", 3.2, 2, true, "Brown", 4)
+    dicodingCat.playWithHuman()
+    dicodingCat.eat()
+    dicodingCat.sleep()
+}
+fun Overloading(){
+    class Animal(private var name: String) {
+        fun eat() {
+            println("$name makan!")
+        }
+        fun eat(typeFood: String) {
+            println("$name memakan $typeFood!")
+        }
+        fun eat(typeFood: String, quantity: Double) {
+            println("$name memakan $typeFood sebanyak $quantity grams!")
+        }
+        fun sleep() {
+            println("$name tidur!")
+        }
+    }
+    val dicodingCat = Animal("Dicoding Miaw")
+
+    dicodingCat.eat()
+    dicodingCat.eat("Ikan Tuna")
+    dicodingCat.eat("Ikan Tuna", 450.0)
+}
+fun Abstract_Class(){
+    abstract class Animal(var name: String, var weight: Double, var age: Int, var isCarnivore: Boolean){
+        fun eat(){
+            println("$name sedang makan !")
+        }
+        fun sleep(){
+            println("$name sedang tidur !")
+        }
+    }
+    class Cat(pName: String, pWeight: Double, pAge: Int, pIsCarnivore: Boolean)
+        : Animal(pName, pWeight, pAge, pIsCarnivore) {
+    }
+    val animal = Cat("dicoding animal", 2.6, 1, true)
+    animal.eat()
+    animal.sleep()
+}
+interface IFly {
+    fun fly()
+    val numberOfWings: Int
+}
+fun Interfaces(){
+
+    class Bird(override val numberOfWings: Int) : IFly {
+        override fun fly() {
+            if(numberOfWings > 0) println("Flying with $numberOfWings wings")
+            else println("I'm Flying without wings")
+        }
+    }
+    fun flyWithWings(bird: IFly) {
+        bird.fly()
+    }
+
+    flyWithWings(Bird(2))
+
+    flyWithWings(object : IFly {
+        override fun fly() {
+            if(numberOfWings > 0) println("Flying with $numberOfWings wings")
+            else println("I'm Flying without wings")
+        }
+        override val numberOfWings: Int
+            get() = 2
+    })
+}
+fun Import_Dan_Packages(){
+    // lihat line 27
+    println(PI)
+    println(cos(120.0))
+    println(sqrt(9.0))
+}
+
+fun Membuat_Package_Baru(){
+    // TODO: https://www.dicoding.com/academies/80/tutorials/4336?from=4335
+    sayHello()
+    println(factorial(4.0))
+    println(pow(3.0, 2.0))
+    println(PI_P)
+}
+fun Exception_Handling(){
+    fun exception(){
+        val someValue = 6
+        val someStringValue = "18.0"
+        val someNullValue: String? = null
+        val someMustNotNullValue: String = someNullValue!!
+
+        // ArithmeticException
+        println(someValue / 0)
+        // NumberFormatException
+        println(someStringValue.toInt())
+        // NullPointerException
+        println(someMustNotNullValue)
+    }
+//    exception()
+    /*
+        Q: !! is at the end of a statement?
+            IJ auto-convert to Kotlin did that
+            for me val price = sale.latest!!
+        A: it means that sale.latest can contain null;
+            the assignment will succeed only if sale.latest
+            is not null and will throw NPE otherwise. This gives
+            null-safety for val price: its type will be non-null
+     */
+
+    val someStringValue: String? = null
+    var someIntValue: Int = 0
+
+    try {
+        someIntValue = someStringValue!!.toInt()
+    } catch (e: NullPointerException) { // ketika try terjadi exception
+        someIntValue = 0
+    } catch (e: NumberFormatException) { // ketika catch diatas terjadi exception
+        someIntValue = -1
+    } finally { // di run jika terjadi exception maupun tidak
+        when (someIntValue) {
+            0 -> println("Catch block NullPointerException terpanggil !")
+            -1 -> println("Catch block NumberFormatException terpanggil !")
+            else -> println(someIntValue)
+        }
+    }
 }
 
 fun Konsep_Functional_Programming(){
